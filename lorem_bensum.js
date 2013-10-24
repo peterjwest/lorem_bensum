@@ -1,26 +1,6 @@
 // Lorem Bensum generator
-// "talk like ben" - says a bunch of stuff like ben might, or whatever.
-// Available options:
-// "talk like ben {words: 100, depth: 4, smoothing: 0.05}"
-
-var loremBensum;
-module.exports = function(robot) {
-	robot.respond(/(talk like ben)(?:\s+{([^}]+)})?/i, function(msg){
-
-    //Extracts JSON-ish settings
-    var params = msg.match[1].split(/\s*,\s*/);
-    var settings = {};
-    for (var i = 0; i < params.length; i++) {
-      var pair = params[i].split(/\s*\:\s*/);
-      settings[pair[0]] = pair[1];
-    }
-
-    msg.reply(loremBensum(settings));
-	});
-}
-
-//Produces sentences which are similar to what Ben says
-loremBensum = function(settings) {
+// Produces sentences which are (statistically) similar to what Ben says, or whatever.
+var loremBensum = function(settings) {
   var data = [
     "How's that going, do you want to pop outside?",
     "Yeah, course.",
@@ -143,25 +123,25 @@ loremBensum = function(settings) {
   var smoothing = settings.smoothing || 0.01;
   var wordLimit = Math.min(settings.wordLimit || 15, 500);
 
-  //Splits each sentence into tokens, including grammar
+  // Splits each sentence into tokens, including grammar
   var tokenise = function(sentence) {
     return sentence.toLowerCase().replace(/[\?!\.]+/g, "").replace(/,/g, function(c) { return " "+c; }).split(/\s+/);
   };
 
-  //Adds beginning and end of sentence tokens
+  // Adds beginning and end of sentence tokens
   var wrap = function(tokens) {
     return ["^"].concat(tokens).concat("$");
   };
 
-  //Creates a hash of all usable words
+  // Creates a hash of all usable words
   var allWords = tokenise(data.join(" "));
   var words = {};
   for (var i = 0; i < allWords.length; i++) {
     words[allWords[i]] = 0;
   }
 
-  //Creates a tree of word chains up to `depth`
-  //terminating with a count of possible words to end the chain
+  // Creates a tree of word chains up to `depth`
+  // terminating with a count of possible words to end the chain
   var getCounts = function(data) {
     var counts = {};
     for (var i = 0; i < data.length; i++) {
@@ -179,11 +159,11 @@ loremBensum = function(settings) {
     return counts;
   };
 
-  //Given a set of words, finds the next word
+  // Given a set of words, finds the next word
   var nextWord = function(previousWords, allWords, counts, depth) {
     var priors = previousWords.slice(-depth);
 
-    //Gets possible words and their counts
+    // Gets possible words and their counts
     var getWordCounts = function(set, counts) {
       for (var j = 0; j < set.length; j++) {
         if (counts[set[j]] === undefined) return {};
@@ -193,14 +173,14 @@ loremBensum = function(settings) {
       return counts;
     };
 
-    //Shallow clones an object
+    // Shallow clones an object
     var clone = function(obj) {
       var cloned = {};
       for (key in obj) cloned[key] = obj[key];
       return cloned;
     };
 
-    //Gets the sample counts for each word and totals
+    // Gets the sample counts for each word and totals
     var wordCounts = getWordCounts(priors, counts);
     var possibleWords = clone(allWords);
     var totalSamples = 0;
@@ -211,15 +191,15 @@ loremBensum = function(settings) {
       totalWords++;
     }
 
-    //Laplacian smoothing function creates more robust and flexible model
+    // Laplacian smoothing function creates more robust and flexible model
     var smoother = function(value, samples, words, smoothing) { return parseFloat(value + smoothing) / (samples + smoothing * words); };
 
-    //Applies smoothing/normalisation to all possible words
+    // Applies smoothing/normalisation to all possible words
     for (key in possibleWords) {
       possibleWords[key] = smoother(possibleWords[key], totalSamples, totalWords, smoothing);
     }
 
-    //Selects a random word based on smoothed likelihood value
+    // Selects a random word based on smoothed likelihood value
     var number = Math.random();
     var accumulate = 0;
     for (key in possibleWords) {
@@ -241,7 +221,6 @@ loremBensum = function(settings) {
     for (var i = 0; i < sentences.length; i++) {
       sentences[i] = upperCaseFirst(sentences[i]);
     }
-    //TODO: replace this nasty hack with replacements taken from the content
     return sentences.join(". ")
       .replace("ben", "Ben")
       .replace("i'm", "I'm")
@@ -252,7 +231,7 @@ loremBensum = function(settings) {
       });
   };
 
-  //Generates a sentence
+  // Generates a sentence
   var counts = getCounts(data);
   var sentence = ["^"];
   var i = 0;
