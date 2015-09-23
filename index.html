@@ -1,0 +1,116 @@
+<html>
+
+<head>
+  <title>Lorem Bensum dummy text generator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <style type="text/css">
+    html {
+      margin: 0;
+      min-height: 100%
+    }
+
+    body {
+      margin: 0 0 0 0;
+      line-height: 1.6em min-height: 100%;
+    }
+
+    textarea {
+      width: 100%;
+      height: 50%;
+    }
+
+    div#site {
+      margin-left: auto;
+      margin-right: auto;
+      width: 700px;
+    }
+
+    h1,
+    form {
+      text-align: center;
+    }
+
+    form {
+      margin-bottom: 2em;
+    }
+
+    form input {
+      font-size: 14px;
+      padding: 2px 6px;
+      font-weight: bold;
+    }
+
+    p {
+      font: Arial, Helvetica, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      line-height: 1.6em
+    }
+
+    a {
+      color: black
+    }
+
+    a:hover {
+      color: grey
+    }
+
+    iframe#like {
+      border: none;
+      width: 500px;
+      height: 80px;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    div.footer {
+      text-align: center;
+      margin: 70px 0 40px 0;
+    }
+
+    p.copy span {
+      padding-left: 1em;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="site">
+    <h1>
+      Lorem Bensum
+    </h1>
+    <br />
+    <h3>What is Lorem Bensum?</h3>
+    <p class='what'>
+      So, yeah every find you've before sort round scroll fairly exactly microphone raw again devices in itself effect gonna christmas your school terms strips know scrum we'll coming exactly angled sleep burritos leaves
+    </p>
+    <hr />
+    <h3>Generated:</h3>
+
+    <button class='copy' style='padding:5px;width:100%;'>Copy Bensum</button>
+    <textarea class="lipsum">Loading Benisms...</textarea>
+  </div>
+</body>
+<script src='lorem_bensum.js'></script>
+<script>
+  document.querySelector('.lipsum').value = loremBensum({
+    wordLimit: 500
+  });
+
+  document.querySelector('.copy').addEventListener('click', function(event) {
+    var copyTextarea = document.querySelector('.lipsum');
+    copyTextarea.select();
+
+    try {
+      var successful = document.execCommand('copy');
+      var msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Copying text command was ' + msg);
+    } catch (err) {
+      console.log('Oops, unable to copy');
+    }
+  });
+</script>
+
+</html>
