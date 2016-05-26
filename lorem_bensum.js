@@ -2,6 +2,7 @@
 // Produces sentences which are (statistically) similar to what Ben says, or whatever.
 var loremBensum = function(settings) {
   var data = [
+    "We can change the colour of objects in a room, which is super-powerful when you think about it.",
     "How's that going, do you want to pop outside?",
     "Yeah, course.",
     "How was it?",
